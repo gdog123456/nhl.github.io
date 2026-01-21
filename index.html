@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>NHL 2025–26 Stats</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+  </style>
+</head>
+<body>
+  <h1>Gavin: NHL Current Standings — 2025–26</h1>
+  <button onclick="loadStandings()">Refresh Standings</button>
+  <div id="standings"></div>
+
+  <script>
+    async function loadStandings() {
+      const container = document.getElementById("standings");
+      container.innerHTML = "Loading…";
+
+      try {
+        const res = await fetch("https://api-web.nhle.com/v1/standings/now");
+        const data = await res.json();
+
+        let html = "<table><tr><th>Team</th><th>Points</th><th>Wins</th><th>Losses</th></tr>";
+
+        data.records.forEach(conf => {
+          conf.teamRecords.forEach(team => {
+            html += `<tr>
+              <td>${team.team.name}</td>
+              <td>${team.points}</td>
+              <td>${team.leagueRecord.wins}</td>
+              <td>${team.leagueRecord.losses}</td>
+            </tr>`;
+          });
+        });
+
+        html += "</table>";
+        container.innerHTML = html;
+      } catch (err) {
+        container.innerHTML = "Error loading data.";
+        console.error(err);
+      }
+    }
+
+    loadStandings();
+  </script>
+</body>
+</html>
